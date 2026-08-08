@@ -1,0 +1,465 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   @fesfut/ui — Tema "cancha nocturna" (tokens + primitivas de diseño)
+
+   Uso en cada app (Tailwind 4):
+     @import "tailwindcss";
+     @import "@fesfut/ui/theme.css";
+     @source "../node_modules/@fesfut/ui/src";   // que Tailwind escanee las clases
+
+   Las fuentes las inyecta cada app con next/font, exponiendo estas variables:
+     --font-archivo  (display)   --font-hanken (sans)   --font-plex (mono)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Base neutra (chrome de admin / login) */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+
+  /* ── Identidad FESFUT (Pantone) ───────────────────────────── */
+  --navy: #0a2240; /* Pantone 289 C */
+  --ink: #0f1822; /* Pantone Black 6C */
+  --paper: #ffffff; /* Pantone White */
+  --brand: var(--navy); /* compat: admin/login lo usan */
+
+  /* Escala derivada para las superficies deportivas (oscuras) */
+  --navy-950: #050f23;
+  --navy-900: #07182f;
+  --navy-800: #0a2240;
+  --navy-700: #0e2c50;
+  --navy-600: #143a66;
+
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --muted: #93a6c4; /* texto secundario sobre navy */
+  --chalk: rgba(255, 255, 255, 0.82); /* líneas de cancha */
+
+  /* ── Acentos deportivos (degradados + secundarios) ────────── */
+  --ice: #79b8ff; /* acento de marca (azul hielo) */
+  --ice-dim: #4f7fb8;
+  --electric: #38e1ff; /* cian reflector */
+  --violet: #6e7bff; /* azul-violeta (profundidad de degradado) */
+  --gold: #ffc24a; /* energía / campeones */
+  --magenta: #ff4d86; /* "en vivo" / acento caliente (uso parco) */
+
+  --grad-cool: linear-gradient(112deg, var(--ice), var(--electric));
+  --grad-deep: linear-gradient(
+    135deg,
+    var(--violet) 0%,
+    var(--ice) 48%,
+    var(--electric) 100%
+  );
+  --grad-hot: linear-gradient(112deg, var(--gold), var(--magenta));
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+
+  --color-navy: var(--navy);
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-muted: var(--muted);
+  --color-ice: var(--ice);
+  --color-electric: var(--electric);
+  --color-violet: var(--violet);
+  --color-gold: var(--gold);
+  --color-magenta: var(--magenta);
+  --color-line: var(--line);
+
+  --font-display: var(--font-archivo), system-ui, sans-serif;
+  --font-sans: var(--font-hanken), system-ui, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* ── Superficie "cancha nocturna" + reflectores en aurora ───────
+   Campo navy profundo con focos fríos animados que derivan despacio,
+   más un destello dorado tenue para dar energía de estadio. */
+.field-night {
+  position: relative;
+  background-color: var(--navy-950);
+  background-image:
+    radial-gradient(110% 70% at 50% -20%, rgba(56, 225, 255, 0.1), transparent 60%),
+    linear-gradient(180deg, var(--navy-800) 0%, var(--navy-950) 78%);
+}
+.field-night::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(38% 38% at 18% 12%, rgba(110, 123, 255, 0.22), transparent 70%),
+    radial-gradient(34% 34% at 82% 8%, rgba(56, 225, 255, 0.2), transparent 70%),
+    radial-gradient(40% 40% at 75% 85%, rgba(121, 184, 255, 0.16), transparent 72%),
+    radial-gradient(26% 26% at 30% 92%, rgba(255, 194, 74, 0.1), transparent 72%);
+  filter: blur(8px);
+  animation: aurora 26s ease-in-out infinite alternate;
+}
+@keyframes aurora {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(-1%, 3%, 0) scale(1.04);
+  }
+}
+
+/* Grano fino para dar textura a las superficies oscuras */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  mix-blend-mode: screen;
+}
+
+/* Tarjeta/panel elevado sobre el campo */
+.panel {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.015)
+  );
+  border: 1px solid var(--line);
+  backdrop-filter: blur(3px);
+}
+
+/* Panel interactivo: borde degradado al pasar + elevación + glow */
+.panel-link {
+  position: relative;
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+.panel-link:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--ice) 55%, transparent);
+  box-shadow:
+    0 18px 40px -22px rgba(56, 225, 255, 0.55),
+    0 0 0 1px color-mix(in srgb, var(--ice) 30%, transparent) inset;
+}
+
+/* Regla de cal (separador) con tinte degradado */
+.chalk-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--ice) 50%, transparent) 12%,
+    color-mix(in srgb, var(--violet) 45%, transparent) 50%,
+    color-mix(in srgb, var(--ice) 50%, transparent) 88%,
+    transparent
+  );
+}
+
+/* Etiqueta de sección tipo señalética, con barrita degradada */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: var(--ice);
+}
+.eyebrow::before {
+  content: "";
+  width: 1.6rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--grad-cool);
+}
+
+/* Texto con relleno degradado */
+.text-grad {
+  background: var(--grad-deep);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-grad-hot {
+  background: var(--grad-hot);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Botón primario con degradado y glow */
+.btn-grad {
+  position: relative;
+  background: var(--grad-cool);
+  color: var(--navy-950);
+  box-shadow: 0 12px 30px -12px rgba(56, 225, 255, 0.6);
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s ease;
+}
+.btn-grad:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px -12px rgba(56, 225, 255, 0.8);
+}
+
+/* Chip de tipo de competición (color según variante) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border: 1px solid color-mix(in srgb, var(--chip, var(--ice)) 45%, transparent);
+  color: var(--chip, var(--ice));
+  background: color-mix(in srgb, var(--chip, var(--ice)) 12%, transparent);
+}
+
+/* Punto "en vivo" pulsante */
+.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--magenta);
+}
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--magenta);
+  animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* Marquee / ticker tipo transmisión deportiva */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: marquee 38s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Dígitos de marcador */
+.tnum {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* Número/estadística gigante con relleno degradado */
+.stat-num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: var(--electric);
+  color: var(--navy-950);
+}
+
+/* Reveal escalonado en carga (lo activa cada página) */
+@keyframes kickoff {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.kickoff {
+  animation: kickoff 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Balón fantasma flotando/girando despacio */
+@keyframes float-spin {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(8deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+.float-spin {
+  animation: float-spin 14s ease-in-out infinite;
+}
+
+/* Reveal-on-scroll (lo activa <Reveal>). Solo transform/opacity para 60fps;
+   el delay escalona hermanos. */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kickoff,
+  .float-spin,
+  .field-night::before,
+  .marquee-track,
+  .live-dot::after {
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ── Contenido Markdown (noticias, páginas, historia) ─────────────── */
+.prose-fesfut {
+  color: var(--paper);
+  line-height: 1.75;
+  font-size: 1.02rem;
+}
+.prose-fesfut > :first-child {
+  margin-top: 0;
+}
+.prose-fesfut p {
+  margin: 0 0 1.1em;
+  color: #c7d4e6;
+}
+.prose-fesfut h2 {
+  margin: 1.8em 0 0.6em;
+  font-family: var(--font-display, inherit);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+}
+.prose-fesfut h3 {
+  margin: 1.5em 0 0.5em;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--paper);
+}
+.prose-fesfut a {
+  color: var(--ice);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-fesfut a:hover {
+  color: var(--electric);
+}
+.prose-fesfut strong {
+  color: var(--paper);
+  font-weight: 700;
+}
+.prose-fesfut ul,
+.prose-fesfut ol {
+  margin: 0 0 1.1em;
+  padding-left: 1.3em;
+  color: #c7d4e6;
+}
+.prose-fesfut li {
+  margin: 0.3em 0;
+}
+.prose-fesfut ul {
+  list-style: disc;
+}
+.prose-fesfut ol {
+  list-style: decimal;
+}
+.prose-fesfut blockquote {
+  margin: 1.2em 0;
+  padding: 0.4em 1.1em;
+  border-left: 3px solid var(--ice);
+  color: var(--muted);
+  font-style: italic;
+}
+.prose-fesfut hr {
+  margin: 2em 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+.prose-fesfut img {
+  margin: 1.2em 0;
+  border-radius: 0.75rem;
+  max-width: 100%;
+}
+.prose-fesfut table {
+  width: 100%;
+  margin: 1.2em 0;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+.prose-fesfut th,
+.prose-fesfut td {
+  padding: 0.5em 0.75em;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.prose-fesfut th {
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
