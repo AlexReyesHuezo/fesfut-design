@@ -1,11 +1,33 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+/** Enlace suelto dentro de un submenú. */
+export interface NavSubLink {
+  href: string;
+  label: string;
+}
+
+/**
+ * Grupo con rótulo dentro de un submenú, para familias de páginas que no
+ * tienen índice propio (p. ej. "Programas" sobre sus dos landings). El rótulo
+ * no navega: solo titula el grupo.
+ */
+export interface NavGroup {
+  label: string;
+  children: NavSubLink[];
+}
+
+export type NavChild = NavSubLink | NavGroup;
+
+export function isNavGroup(child: NavChild): child is NavGroup {
+  return "children" in child;
+}
+
 export interface NavLink {
   href: string;
   label: string;
   /** Submenú en hover (escritorio) / aplanado (móvil). */
-  children?: { href: string; label: string }[];
+  children?: NavChild[];
 }
 
 const linkClass =
@@ -13,6 +35,9 @@ const linkClass =
 
 const mobileLinkClass =
   "block rounded-lg px-3 py-2 font-display text-sm font-semibold uppercase tracking-wide text-muted transition-colors hover:bg-white/5 hover:text-paper";
+
+const groupLabelClass =
+  "px-3 pb-1 pt-0.5 font-display text-[0.6rem] font-bold uppercase tracking-[0.18em] text-[var(--ice)]";
 
 /**
  * Barra pública compartida (chrome "cancha nocturna"). Translúcida sobre el
@@ -57,12 +82,27 @@ export function SiteHeader({
                 <Link href={item.href} className={linkClass}>
                   {item.label}
                 </Link>
-                <div className="absolute left-1/2 top-full hidden min-w-[10rem] -translate-x-1/2 rounded-xl border border-line bg-[var(--navy-900)] p-1.5 shadow-xl group-hover:block">
-                  {item.children.map((c) => (
-                    <Link key={c.href} href={c.href} className={mobileLinkClass}>
-                      {c.label}
-                    </Link>
-                  ))}
+                <div className="absolute left-1/2 top-full hidden min-w-[11rem] -translate-x-1/2 rounded-xl border border-line bg-[var(--navy-900)] p-1.5 shadow-xl group-hover:block">
+                  {item.children.map((c) =>
+                    isNavGroup(c) ? (
+                      <div key={c.label} className="mt-1.5 border-t border-line pt-1.5">
+                        <p className={groupLabelClass}>{c.label}</p>
+                        {c.children.map((s) => (
+                          <Link
+                            key={s.href}
+                            href={s.href}
+                            className={`${mobileLinkClass} pl-5`}
+                          >
+                            {s.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : (
+                      <Link key={c.href} href={c.href} className={mobileLinkClass}>
+                        {c.label}
+                      </Link>
+                    ),
+                  )}
                 </div>
               </div>
             ) : (
@@ -107,15 +147,27 @@ export function SiteHeader({
                   <Link href={item.href} className={mobileLinkClass}>
                     {item.label}
                   </Link>
-                  {item.children?.map((c) => (
-                    <Link
-                      key={c.href}
-                      href={c.href}
-                      className={`${mobileLinkClass} pl-6 text-xs`}
-                    >
-                      {item.label} · {c.label}
-                    </Link>
-                  ))}
+                  {item.children?.map((c) =>
+                    isNavGroup(c) ? (
+                      c.children.map((s) => (
+                        <Link
+                          key={s.href}
+                          href={s.href}
+                          className={`${mobileLinkClass} pl-6 text-xs`}
+                        >
+                          {c.label} · {s.label}
+                        </Link>
+                      ))
+                    ) : (
+                      <Link
+                        key={c.href}
+                        href={c.href}
+                        className={`${mobileLinkClass} pl-6 text-xs`}
+                      >
+                        {item.label} · {c.label}
+                      </Link>
+                    ),
+                  )}
                 </div>
               ))}
               {action ? (

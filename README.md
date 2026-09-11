@@ -56,7 +56,18 @@ import { SiteHeader, LocaleSwitcher, FesfutLockup } from "@fesfut/ui";
 
 <SiteHeader
   brand={<FesfutLockup federationLabel={t("brand.federation")} />}
-  nav={[{ href: "/ligas", label: t("nav.ligas") }]}
+  nav={[
+    { href: "/ligas", label: t("nav.ligas") },
+    // Submenú: enlaces sueltos y, opcionalmente, grupos con rótulo.
+    {
+      href: "/institucional",
+      label: t("nav.institucional"),
+      children: [
+        { href: "/institucional", label: t("nav.comites") },
+        { label: t("nav.programas"), children: [{ href: "/institucional/programas/plan-maestro", label: "Plan Maestro" }] },
+      ],
+    },
+  ]}
   action={{ href: "/admin", label: t("nav.panel") }}
   localeSwitcher={<LocaleSwitcher locales={locales} current={locale} action={setLocale} />}
 />

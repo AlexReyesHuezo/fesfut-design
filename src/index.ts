@@ -18,6 +18,13 @@ export {
 // Chrome del sitio
 export { PitchBackdrop } from "./site/pitch-backdrop";
 export { LocaleSwitcher } from "./site/locale-switcher";
-export { SiteHeader, type NavLink } from "./site/site-header";
+export {
+  SiteHeader,
+  isNavGroup,
+  type NavLink,
+  type NavChild,
+  type NavSubLink,
+  type NavGroup,
+} from "./site/site-header";
 export { SiteFooter } from "./site/site-footer";
 export { SponsorsStrip, type SponsorItem } from "./site/sponsors-strip";
