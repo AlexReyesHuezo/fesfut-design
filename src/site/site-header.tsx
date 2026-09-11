@@ -40,7 +40,7 @@ const mobileLinkClass =
    caja), en blanco para leerse como encabezado; sus ítems bajan de jerarquía:
    más chicos, apagados y detrás de un riel de indentación. */
 const groupLabelClass =
-  "block px-3 pb-1.5 pt-2 font-display text-sm font-semibold uppercase tracking-wide text-paper";
+  "block px-3 pb-2 font-display text-sm font-semibold uppercase tracking-wide text-paper";
 
 const groupItemClass =
   "block rounded-lg py-1.5 pl-3 pr-3 font-display text-xs font-semibold uppercase tracking-wide text-muted transition-colors hover:bg-white/5 hover:text-paper";
@@ -88,12 +88,12 @@ export function SiteHeader({
                 <Link href={item.href} className={linkClass}>
                   {item.label}
                 </Link>
-                <div className="absolute left-1/2 top-full hidden min-w-[12rem] -translate-x-1/2 rounded-xl border border-line bg-[var(--navy-900)] p-1.5 shadow-xl group-hover:block">
+                <div className="absolute left-1/2 top-full hidden min-w-[13rem] -translate-x-1/2 rounded-xl border border-line bg-[var(--navy-900)] p-1.5 shadow-xl group-hover:block">
                   {item.children.map((c) =>
                     isNavGroup(c) ? (
-                      <div key={c.label} className="mt-1 border-t border-line pt-1">
+                      <div key={c.label} className="mt-2 border-t border-line pt-3">
                         <p className={groupLabelClass}>{c.label}</p>
-                        <div className="ml-4 border-l border-line pl-2">
+                        <div className="ml-5 border-l border-line pl-3">
                           {c.children.map((s) => (
                             <Link key={s.href} href={s.href} className={groupItemClass}>
                               {s.label}
