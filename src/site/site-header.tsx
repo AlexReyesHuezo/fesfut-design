@@ -84,7 +84,7 @@ export function SiteHeader({
         <nav className="hidden items-center gap-0.5 lg:flex">
           {nav.map((item) =>
             item.children && item.children.length > 0 ? (
-              <div key={item.href} className="group relative">
+              <div key={item.href} className="group relative flex items-center">
                 <Link href={item.href} className={linkClass}>
                   {item.label}
                 </Link>
