@@ -11,17 +11,23 @@ export function PlayerAvatar({
   name,
   src,
   className = "h-8 w-8",
+  decorative = false,
 }: {
   name: string;
   src?: string | null;
   className?: string;
+  /**
+   * El nombre ya está escrito al lado: se oculta a lectores de pantalla para
+   * que no lo lean dos veces.
+   */
+  decorative?: boolean;
 }) {
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={src}
-        alt={name}
+        alt={decorative ? "" : name}
         className={`${className} shrink-0 rounded-full object-cover`}
         loading="lazy"
       />
@@ -37,8 +43,9 @@ export function PlayerAvatar({
     <svg
       viewBox="0 0 40 40"
       className={`${className} shrink-0 rounded-full`}
-      role="img"
-      aria-label={name}
+      {...(decorative
+        ? { "aria-hidden": true }
+        : { role: "img", "aria-label": name })}
     >
       <defs>
         <linearGradient id={uid} x1="0" y1="0" x2="0" y2="1">

@@ -14,7 +14,7 @@ Se distribuye como **fuente** (sin build): las apps lo transpilan con
 ```jsonc
 // package.json de cada app
 "dependencies": {
-  "@fesfut/ui": "github:AlexReyesHuezo/fesfut-design#v0.1.0"
+  "@fesfut/ui": "github:AlexReyesHuezo/fesfut-design#v0.1.4"
 }
 ```
 
@@ -70,8 +70,26 @@ import { SiteHeader, LocaleSwitcher, FesfutLockup } from "@fesfut/ui";
   ]}
   action={{ href: "/admin", label: t("nav.panel") }}
   localeSwitcher={<LocaleSwitcher locales={locales} current={locale} action={setLocale} />}
+  // Opcionales (por defecto en español): nombre accesible de la nav y skip link.
+  navLabel={t("nav.label")}
+  skipLink={{ targetId: "contenido", label: t("nav.skip") }}
 />
 ```
+
+**4. Accesibilidad que depende de la app**:
+
+- El header abre con un enlace "Saltar al contenido" hacia `#contenido`. La app
+  debe poner ese `id` en el contenedor del contenido principal, con
+  `tabIndex={-1}` para que reciba el foco:
+
+  ```tsx
+  <div id="contenido" tabIndex={-1} className="flex-1 outline-none">{children}</div>
+  ```
+
+- `TeamCrest` y `PlayerAvatar` se anuncian con su nombre. Cuando el nombre ya
+  está escrito al lado, pasar `decorative` para que no se lea dos veces.
+- `.marquee` se pausa en hover, con el foco dentro o con `data-paused="true"`;
+  una franja que se mueve más de 5 s necesita además un botón de pausa en la app.
 
 ## Contenido
 

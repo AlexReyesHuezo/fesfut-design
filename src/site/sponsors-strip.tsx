@@ -26,6 +26,8 @@ export function SponsorsStrip({
             <img
               src={s.logoUrl}
               alt={s.name}
+              loading="lazy"
+              decoding="async"
               className="h-10 w-auto opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0 sm:h-12"
             />
           );

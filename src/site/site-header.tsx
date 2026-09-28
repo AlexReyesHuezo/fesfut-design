@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { MobileMenu } from "./mobile-menu";
 
 /** Enlace suelto dentro de un submenú. */
 export interface NavSubLink {
@@ -48,11 +49,14 @@ const groupItemClass =
 /**
  * Barra pública compartida (chrome "cancha nocturna"). Translúcida sobre el
  * campo, con regla de cal inferior, nav de escritorio con subrayado animado y
- * menú móvil `<details>` sin JS.
+ * menú móvil `<details>` (funciona sin JS; con JS se cierra al navegar).
  *
  * El contenido (marca, ítems de nav, acción final, conmutador de idioma) lo
  * inyecta cada sitio por props — así fesfut-site y ligas-site comparten la
  * estructura pero definen su propio menú y sus etiquetas ya traducidas.
+ *
+ * Abre con un skip link hacia `#${skipLink.targetId}`: la app debe poner ese
+ * `id` (con `tabIndex={-1}`) en el contenedor del contenido principal.
  */
 export function SiteHeader({
   homeHref = "/",
@@ -61,6 +65,8 @@ export function SiteHeader({
   action,
   localeSwitcher,
   menuLabel = "Menú",
+  navLabel = "Principal",
+  skipLink = { targetId: "contenido", label: "Saltar al contenido" },
 }: {
   homeHref?: string;
   brand: ReactNode;
@@ -69,9 +75,21 @@ export function SiteHeader({
   action?: { href: string; label: string } | null;
   localeSwitcher: ReactNode;
   menuLabel?: string;
+  /** Nombre accesible de la navegación (la distingue de la del pie). */
+  navLabel?: string;
+  /** Enlace "saltar al contenido"; `null` lo omite. */
+  skipLink?: { targetId: string; label: string } | null;
 }) {
   return (
     <header className="sticky top-0 z-40 bg-[var(--navy-950)]/65 backdrop-blur-md">
+      {skipLink ? (
+        <a
+          href={`#${skipLink.targetId}`}
+          className="sr-only rounded-full bg-[var(--paper)] px-4 py-2 font-display text-sm font-bold uppercase tracking-wide text-[var(--navy-950)] focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50"
+        >
+          {skipLink.label}
+        </a>
+      ) : null}
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-6">
         <Link
           href={homeHref}
@@ -81,14 +99,16 @@ export function SiteHeader({
         </Link>
 
         {/* ── Nav de escritorio ────────────────────────────────── */}
-        <nav className="hidden items-center gap-0.5 lg:flex">
+        <nav aria-label={navLabel} className="hidden items-center gap-0.5 lg:flex">
           {nav.map((item) =>
             item.children && item.children.length > 0 ? (
               <div key={item.href} className="group relative flex items-center">
                 <Link href={item.href} className={linkClass}>
                   {item.label}
                 </Link>
-                <div className="absolute left-1/2 top-full hidden min-w-[13rem] -translate-x-1/2 rounded-xl border border-line bg-[var(--navy-900)] p-1.5 shadow-xl group-hover:block">
+                {/* Se abre en hover y también cuando el foco de teclado entra
+                    en el ítem, para que el submenú sea alcanzable con Tab. */}
+                <div className="absolute left-1/2 top-full hidden min-w-[13rem] -translate-x-1/2 rounded-xl border border-line bg-[var(--navy-900)] p-1.5 shadow-xl group-focus-within:block group-hover:block">
                   {item.children.map((c) =>
                     isNavGroup(c) ? (
                       <div key={c.label} className="mt-2 border-t border-line pt-3">
@@ -130,22 +150,8 @@ export function SiteHeader({
         {/* ── Nav móvil (menú desplegable, sin JS) ──────────────── */}
         <div className="flex items-center gap-2 lg:hidden">
           {localeSwitcher}
-          <details className="relative">
-            <summary className="flex cursor-pointer list-none items-center rounded-md border border-line p-2 text-paper [&::-webkit-details-marker]:hidden">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                aria-hidden
-              >
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-              <span className="sr-only">{menuLabel}</span>
-            </summary>
-            <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-xl border border-line bg-[var(--navy-900)] p-2 shadow-xl">
+          <MobileMenu label={menuLabel}>
+            <nav aria-label={navLabel}>
               {nav.map((item) => (
                 <div key={item.href}>
                   <Link href={item.href} className={mobileLinkClass}>
@@ -182,8 +188,8 @@ export function SiteHeader({
                   </Link>
                 </>
               ) : null}
-            </div>
-          </details>
+            </nav>
+          </MobileMenu>
         </div>
       </div>
       {/* Línea inferior degradada */}

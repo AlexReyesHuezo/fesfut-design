@@ -11,18 +11,22 @@ export function SiteFooter({
   nav,
   rights,
   wordmark = "FESFUT",
+  navLabel = "Secundaria",
 }: {
   brand: ReactNode;
   nav: { href: string; label: string }[];
   /** Texto de derechos ya formateado (p. ej. "© 2026 FESFUT · El Salvador"). */
   rights: string;
   wordmark?: string;
+  /** Nombre accesible de la nav del pie (la distingue de la del header). */
+  navLabel?: string;
 }) {
   return (
     <footer className="relative z-10 mt-24 overflow-hidden border-t border-line">
       {/* Wordmark gigante de fondo */}
       <p
         aria-hidden
+        translate="no"
         className="pointer-events-none absolute -bottom-6 left-1/2 -translate-x-1/2 select-none whitespace-nowrap font-display text-[22vw] font-black uppercase italic leading-none tracking-tighter text-paper opacity-[0.03]"
       >
         {wordmark}
@@ -30,7 +34,7 @@ export function SiteFooter({
 
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-paper">{brand}</div>
-        <nav className="flex flex-wrap gap-x-6 gap-y-2">
+        <nav aria-label={navLabel} className="flex flex-wrap gap-x-6 gap-y-2">
           {nav.map((item) => (
             <Link
               key={item.href}

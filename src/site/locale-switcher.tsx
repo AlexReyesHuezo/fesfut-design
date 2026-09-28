@@ -1,6 +1,20 @@
 const DEFAULT_SHORT: Record<string, string> = { "es-SV": "ES", en: "EN" };
 
 /**
+ * Nombre del idioma en ese mismo idioma ("Español", "English"): es lo que
+ * reconoce quien busca cambiar a su lengua, sea cual sea la interfaz actual.
+ */
+function nativeName(locale: string): string {
+  const base = locale.split("-")[0];
+  try {
+    const name = new Intl.DisplayNames([locale], { type: "language" }).of(base);
+    return name ? name.charAt(0).toLocaleUpperCase(locale) + name.slice(1) : locale;
+  } catch {
+    return locale;
+  }
+}
+
+/**
  * Conmutador de idioma (presentacional). La lógica de i18n vive en cada app:
  * se le pasan los `locales`, el `current` y la Server Action `action` que
  * persiste la cookie. Así el paquete no depende de next-intl.
@@ -27,6 +41,9 @@ export function LocaleSwitcher({
             value={l}
             disabled={active}
             aria-pressed={active}
+            aria-label={nativeName(l)}
+            lang={l}
+            translate="no"
             className={`px-2.5 py-1.5 font-display text-xs font-bold uppercase tracking-wide transition-colors ${
               active ? "text-[var(--ice)]" : "text-muted hover:text-paper"
             }`}

@@ -90,6 +90,33 @@ body {
   font-family: var(--font-sans);
 }
 
+/* El header es sticky (h-16): sin este margen, los saltos a un ancla y el
+   foco por teclado dejan el destino tapado debajo de la barra. */
+html {
+  scroll-padding-top: 5rem;
+  -webkit-tap-highlight-color: rgba(121, 184, 255, 0.2);
+}
+
+/* Las páginas "cancha nocturna" son oscuras: que el navegador pinte también
+   oscuros scrollbars, controles nativos y el fondo del rebote de scroll. */
+:root:has(.field-night) {
+  color-scheme: dark;
+}
+:root:has(.field-night) body {
+  background: var(--navy-950);
+}
+
+/* Sin la demora de doble toque para zoom en controles táctiles. */
+a,
+button,
+summary,
+label,
+select,
+input,
+textarea {
+  touch-action: manipulation;
+}
+
 /* ── Superficie "cancha nocturna" + reflectores en aurora ───────
    Campo navy profundo con focos fríos animados que derivan despacio,
    más un destello dorado tenue para dar energía de estadio. */
@@ -281,7 +308,11 @@ body {
   will-change: transform;
   animation: marquee 38s linear infinite;
 }
-.marquee:hover .marquee-track {
+/* Se detiene al pasar el ratón, cuando el foco entra en la franja o cuando la
+   app lo pide con `data-paused="true"` (p. ej. desde un botón de pausa). */
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track,
+.marquee[data-paused="true"] .marquee-track {
   animation-play-state: paused;
 }
 @keyframes marquee {
@@ -371,6 +402,10 @@ body {
     transform: none;
     transition: none;
   }
+  .panel-link:hover,
+  .btn-grad:hover {
+    transform: none;
+  }
 }
 
 /* ── Contenido Markdown (noticias, páginas, historia) ─────────────── */
@@ -385,6 +420,10 @@ body {
 .prose-fesfut p {
   margin: 0 0 1.1em;
   color: #c7d4e6;
+}
+.prose-fesfut h2,
+.prose-fesfut h3 {
+  text-wrap: balance;
 }
 .prose-fesfut h2 {
   margin: 1.8em 0 0.6em;
@@ -455,6 +494,9 @@ body {
   padding: 0.5em 0.75em;
   border-bottom: 1px solid var(--line);
   text-align: left;
+}
+.prose-fesfut td {
+  font-variant-numeric: tabular-nums;
 }
 .prose-fesfut th {
   color: var(--muted);

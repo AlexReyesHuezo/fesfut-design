@@ -76,7 +76,7 @@ export function FesfutLockup({
     <span className={`flex items-center gap-2.5 ${className ?? ""}`}>
       <FesfutBall className="h-8 w-8 shrink-0" />
       <span className="flex flex-col leading-none">
-        <span className="font-display text-lg font-extrabold tracking-tight">
+        <span translate="no" className="font-display text-lg font-extrabold tracking-tight">
           FESFUT
         </span>
         {showSub ? (

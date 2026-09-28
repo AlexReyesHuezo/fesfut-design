@@ -12,19 +12,25 @@ export function TeamCrest({
   seed,
   src,
   className = "h-6 w-6",
+  decorative = false,
 }: {
   name: string;
   /** Semilla estable para el color (p. ej. slug). Por defecto, el nombre. */
   seed?: string;
   src?: string | null;
   className?: string;
+  /**
+   * El nombre ya está escrito al lado: se oculta a lectores de pantalla para
+   * que no lo lean dos veces.
+   */
+  decorative?: boolean;
 }) {
   if (src) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={src}
-        alt={name}
+        alt={decorative ? "" : name}
         className={`${className} shrink-0 object-contain`}
         loading="lazy"
       />
@@ -43,8 +49,9 @@ export function TeamCrest({
     <svg
       viewBox="0 0 48 56"
       className={`${className} shrink-0`}
-      role="img"
-      aria-label={name}
+      {...(decorative
+        ? { "aria-hidden": true }
+        : { role: "img", "aria-label": name })}
     >
       <defs>
         <linearGradient id={uid} x1="0" y1="0" x2="0" y2="1">
